@@ -1,35 +1,13 @@
 <html>
 <head>
-  <script src="https://aframe.io/releases/0.6.0/aframe.min.js"></script>
-  <script src="//cdn.rawgit.com/donmccurdy/aframe-extras/v3.8.6/dist/aframe-extras.min.js"></script>
-  <script src="aframe-click-drag-component.min.js"></script>
-  <script>
-    registerAframeClickDragComponent(window.AFRAME);
-  </script>
+  <script src="three.min.js"></script>
+  <script src="OBJLoader.js"></script>
+  <script src="OrbitControls.js"></script>
 </head>
 
 <body>
-  <a-scene>
-    <a-entity scale="0.1 0.1 0.1" json-model="src: url(models/transcription_eukaryotic.json);"></a-entity>
-    <a-entity id="model" click-drag scale="0.1 0.1 0.1" obj-model="obj: url(models/cytosine.obj);"></a-entity>
-    <a-entity text="value: Hello World;"></a-entity>
-    <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane>
-    <a-sky color="#ECECEC"></a-sky>
-    <a-entity id="camera" camera look-controls wasd-controls="fly: true"></a-entity>
-  </a-scene>
+  <script src="main.js"></script>
   <script src="/reload/reload.js"></script>
-
-  <script>
-    var model = document.querySelector("#model");
-    var camera = document.querySelector("#camera");
-    model.addEventListener("dragstart", function(event){
-      camera.setAttribute('look-controls', {enabled: false});
-    });
-    model.addEventListener("dragend", function(event){
-      camera.setAttribute('look-controls', {enabled: true});
-    });
-    //console.log(model);
-  </script>
 </body>
 
 </html>
