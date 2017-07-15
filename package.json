@@ -1,0 +1,19 @@
+{
+  "name": "vrcell",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Daniel Svane",
+  "license": "MIT",
+  "dependencies": {
+    "aframe-click-drag-component": "^3.0.1",
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3"
+  },
+  "devDependencies": {
+    "reload": "^2.0.0"
+  }
+}
