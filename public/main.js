@@ -4,7 +4,7 @@ var sticks = [];
 var surfaces = [];
 var sky, sunSphere;
 
-var showSticks = false;
+var showSticks = true;
 var transparent = showSticks;
 var opacity = 0.5;
 
@@ -46,50 +46,40 @@ function generateHelix(sequence, offset){
 	}
 }
 
-var axisX = THREE.Vector3( 1, 0, 0 );
-var axisY = THREE.Vector3( 0, 1, 0 );
-var axisZ = THREE.Vector3( 0, 0, 1 );
-
 function createNucleotide(letter, attributes){
 	var nucleotide = models.find(function(a){ return a.letter === letter });
 	var object = nucleotide.object.clone();
 
-	object.rotation.x += attributes.rotationX;
-	object.rotation.y = attributes.rotationY;
-	//object.rotateOnAxis(new THREE.Vector3( 0, 1, 0 ), attributes.rotationY);
-	object.position.x = attributes.positionX;
-	object.position.y = attributes.positionY;
-	object.position.z = attributes.positionZ;
-
+	applyAttributes(object, attributes);
 	scene.add(object);
 
 	if(showSticks){
 		var stick = nucleotide.stick.clone();
-
-		// stick.rotateOnAxis(new THREE.Vector3( 1, 0, 0 ), attributes.rotationX);
-			stick.rotation.x += attributes.rotationX;
-		stick.rotation.y = attributes.rotationY;
-		// stick.rotateOnAxis(new THREE.Vector3( 0, 1, 0 ), attributes.rotationY);
-		//stick.rotation.x += attributes.rotationX;
-		stick.position.x = attributes.positionX;
-		stick.position.y = attributes.positionY;
-		stick.position.z = attributes.positionZ;
-
+		applyAttributes(stick, attributes);
 		scene.add(stick);
 	}
+}
+
+function applyAttributes(object, attributes){
+	object.rotation.x += attributes.rotationX;
+	object.rotation.y = attributes.rotationY;
+	object.position.x = attributes.positionX;
+	object.position.y = attributes.positionY;
+	object.position.z = attributes.positionZ;
 }
 
 function getNucleotideAttributesAtIndex(i, codingStrand){
   var scale = 1;
 	var rotationY, offsetX;
+
 	if(codingStrand){
 		rotationY = Math.PI;
-		offsetX = 1.2;
+		offsetX = 1.2*scale;
 	} else {
 		rotationY = 0;
 		offsetX = 0;
 	}
-	offsetX = offsetX*scale;
+
   var dimensions = 0.1*scale;
   var offset = 0.34*scale;
   var period = 3.4*scale;
@@ -165,7 +155,7 @@ function hideSticks(){
 }
 
 function loadModel(model, callback){
-	console.log("askdjalskdjasl");
+
 	var objloader = new THREE.OBJLoader();
 	objloader.load(model.url, function(object){
 
@@ -188,15 +178,6 @@ function loadModel(model, callback){
 		callback();
 
 	});
-}
-
-function applyTransforms(object){
-	object.updateMatrix();
-	object.children[0].geometry.applyMatrix( object.matrix );
-	object.position.set( 0, 0, 0 );
-	object.rotation.set( 0, 0, 0 );
-	object.scale.set( 1, 1, 1 );
-	object.updateMatrix();
 }
 
 function loadStick(model, callback){
@@ -223,6 +204,14 @@ function loadStick(model, callback){
 	});
 }
 
+function applyTransforms(object){
+	object.updateMatrix();
+	object.children[0].geometry.applyMatrix( object.matrix );
+	object.position.set( 0, 0, 0 );
+	object.rotation.set( 0, 0, 0 );
+	object.scale.set( 1, 1, 1 );
+	object.updateMatrix();
+}
 
 
 function init() {
@@ -266,94 +255,6 @@ function init() {
 			render();
 		}
 	});
-
-// 	var vertexShader = document.getElementById( 'vertexshader' ).textContent;
-// var fragmentShader = document.getElementById( 'fragmentshader' ).textContent;
-// var uniforms = {
-//   "color1" : {
-//   type : "c",
-//   value : new THREE.Color(color1)
-//   },
-//   "color2" : {
-//     type : "c",
-//     value : new THREE.Color(color2)
-//   }
-// };
-//
-// //skydome
-//
-// var skyGeo = new THREE.SphereGeometry( 2000, 32, 15 );
-// var skyMat = new THREE.ShaderMaterial( { vertexShader: vertexShader, fragmentShader: fragmentShader, uniforms: uniforms, side: THREE.BackSide } );
-//
-// var sky = new THREE.Mesh( skyGeo, skyMat );
-// scene.add( sky );
-
-	// var mtlloader = new THREE.MTLLoader();
-	// mtlloader.load('models/adenine.mtl', function(materials){
-	// 	materials.preload();
-	//
-	// 	var objloader = new THREE.OBJLoader();
-	// 	objloader.setMaterials(materials);
-	// 	objloader.load('models/adenine.obj', function(stick){
-
-	// 		var objloader2 = new THREE.OBJLoader();
-	// 		objloader2.load('models/adenine_surface.obj', function(surface){
-	//
-	// 			var xRotation = 0.5;
-	// 			var yRotation = 1.7;
-	// 			var zRotation = -1.5;
-	//
-	// 			//createHelix(stick, 0, xRotation, yRotation, zRotation, sticks );
-	// 			var basicMaterial = new THREE.MeshLambertMaterial( { color: 0xed4040, transparent: transparent, opacity: opacity} );
-	//
-	// 			surface.traverse( function ( child ) {
-	//
-	// 			    if ( child instanceof THREE.Mesh ) {
-	//
-	// 			        child.material = basicMaterial;
-	//
-	// 			    }
-	//
-	// 			} );
-	//
-	// 			createHelix(surface, 0, xRotation, yRotation, zRotation, surfaces );
-	// 			render();
-	// 		});
-	// // 	});
-	// // });
-	//
-	// // var mtlloader = new THREE.MTLLoader();
-	// // mtlloader.load('models/thymine.mtl', function(materials){
-	// // 	materials.preload();
-	// //
-	// // 	var objloader = new THREE.OBJLoader();
-	// // 	objloader.setMaterials(materials);
-	// // 	objloader.load('models/thymine.obj', function(stick){
-	//
-	// 		var objloader2 = new THREE.OBJLoader();
-	// 		objloader2.load('models/thymine_surface.obj', function(surface){
-	// 			//createHelix(stick, 1.2, 0, 1.6, -0.5, sticks);
-	// 			var basicMaterial = new THREE.MeshLambertMaterial( { color: 0xefe639, transparent: transparent, opacity: opacity} );
-	//
-	// 			surface.traverse( function ( child ) {
-	//
-	// 			    if ( child instanceof THREE.Mesh ) {
-	//
-	// 			        child.material = basicMaterial;
-	//
-	// 			    }
-	//
-	// 			} );
-	// 			createHelix(surface, 1.2, 0, 1.6, -0.5, surfaces);
-	// 			render();
-	// 		});
-	// 	});
-	// });
-
-  //createHelix();
-
-  //render();
-
 }
 
 function render(){
