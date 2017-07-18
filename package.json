@@ -10,9 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.17.2",
-    "express": "^4.15.3"
-  },
-  "devDependencies": {
+    "express": "^4.15.3",
     "reload": "^2.0.0"
   },
   "engines": {
