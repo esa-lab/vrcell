@@ -1,0 +1,34 @@
+canvas {
+  position: absolute;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+}
+
+.info {
+  background: #fff;
+  position: relative;
+  z-index:100;
+  left: 50px;
+  top: 50px;
+  display: inline-block;
+  padding: 20px;
+}
+
+.info-adenine {
+  background: #34b52d;
+}
+
+.info-thymine {
+  background: #f44141;
+}
+
+.info-cytosine {
+  background: #4289f4;
+}
+
+.info-guanine {
+  background: #ffe207;
+}
