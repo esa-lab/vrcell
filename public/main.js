@@ -4,7 +4,7 @@ var sticks = [];
 var surfaces = [];
 var sky, sunSphere;
 
-var showSticks = true;
+var showSticks = false;
 var transparent = showSticks;
 var opacity = 0.5;
 
@@ -44,6 +44,10 @@ function generateHelix(sequence, offset){
 		createNucleotide(letter, attributes);
 		index++;
 	}
+}
+
+function findModelByName(name){
+	return models.find(function(a){ return a.name === name }).object.clone();
 }
 
 function createNucleotide(letter, attributes){
@@ -102,38 +106,49 @@ var models = [
 	{
 		name: 'adenine',
 		letter: 'A',
-		url: 'models/adenine_surface.obj',
+		url: 'models/adenine_surface_lowres.obj',
 		url_stick: 'models/adenine.obj',
 		url_material: 'models/adenine.mtl',
 		rotation: {x: 0, y: 1.7, z: -1.5},
-		color: 0x34b52d
+		color: 0x34b52d,
+		scale: 0.7
 	},
 	{
 		name: 'thymine',
 		letter: 'T',
-		url: 'models/thymine_surface.obj',
+		url: 'models/thymine_surface_lowres.obj',
 		url_stick: 'models/thymine.obj',
 		url_material: 'models/thymine.mtl',
 		rotation: {x: -3.2, y: 4.6, z: 1.5},
-		color: 0xf44141
+		color: 0xf44141,
+		scale: 0.7
 	},
 	{
 		name: 'cytosine',
 		letter: 'C',
-		url: 'models/cytosine_surface.obj',
+		url: 'models/cytosine_surface_lowres.obj',
 		url_stick: 'models/cytosine.obj',
 		url_material: 'models/cytosine.mtl',
 		rotation: {x: 0.2, y: 1.7, z: -1.7},
-		color: 0x4289f4
+		color: 0x4289f4,
+		scale: 0.7
 	},
 	{
 		name: 'guanine',
 		letter: 'G',
-		url: 'models/guanine_surface.obj',
+		url: 'models/guanine_surface_lowres.obj',
 		url_stick: 'models/guanine.obj',
 		url_material: 'models/guanine.mtl',
 		rotation: {x: 1.0, y: 4.9, z: -0.7},
-		color: 0xffe207
+		color: 0xffe207,
+		scale: 0.7
+	},
+	{
+		name: 'rna_polymerase',
+		url: 'models/rna_polymerase.obj',
+		rotation: {x: 1.0, y: 4.9, z: -0.7},
+		color: 0xea3cd6,
+		scale: 5
 	}
 ];
 
@@ -162,6 +177,7 @@ function loadModel(model, callback){
 		object.rotation.x = model.rotation.x;
 		object.rotation.y = model.rotation.y;
 		object.rotation.z = model.rotation.z;
+		object.scale.set(model.scale, model.scale, model.scale);
 
 		applyTransforms(object);
 
@@ -220,7 +236,7 @@ function init() {
 	//scene.background = new THREE.Color( 0xffffff );
 
 	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
-	camera.position.x = -2;
+	camera.position.set(10, 10, 10);
 
 	renderer = new THREE.WebGLRenderer({ antialias: true });
 	renderer.setSize( window.innerWidth, window.innerHeight );
@@ -228,6 +244,8 @@ function init() {
 	document.body.appendChild( renderer.domElement );
 
   controls = new THREE.OrbitControls(camera);
+	controls.target.set(10, 0, 0);
+	controls.update();
   controls.addEventListener( 'change', render );
 
   var axisHelper = new THREE.AxisHelper( 2 );
@@ -252,9 +270,19 @@ function init() {
 		} else {
 			generateHelix(sequence, false);
 			generateHelix(complementarySequence(sequence), true);
+			addPolymerase();
 			render();
 		}
 	});
+}
+
+function addPolymerase(){
+	var scale = 5;
+	var polymerase = findModelByName('rna_polymerase');
+	//polymerase.scale.set(scale, scale, scale);
+	polymerase.position.set(8,5,0);
+	//applyTransforms(polymerase);
+	scene.add(polymerase);
 }
 
 function render(){
