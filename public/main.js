@@ -144,10 +144,17 @@ var models = [
 		scale: 0.7
 	},
 	{
-		name: 'rna_polymerase',
+		name: 'rna_polymerase', // http://www.rcsb.org/pdb/explore.do?structureId=3lu0
 		url: 'models/rna_polymerase.obj',
 		rotation: {x: 1.0, y: 4.9, z: -0.7},
 		color: 0xea3cd6,
+		scale: 5
+	},
+	{
+		name: 'sigma', // http://www.rcsb.org/pdb/explore.do?structureId=1SIG
+		url: 'models/sigma.obj',
+		rotation: {x: 1.0, y: 4.9, z: -0.7},
+		color: 0xe2580d,
 		scale: 5
 	}
 ];
@@ -270,6 +277,7 @@ function init() {
 		} else {
 			generateHelix(sequence, false);
 			generateHelix(complementarySequence(sequence), true);
+			addSigma();
 			addPolymerase();
 			render();
 		}
@@ -277,11 +285,14 @@ function init() {
 }
 
 function addPolymerase(){
-	var scale = 5;
 	var polymerase = findModelByName('rna_polymerase');
-	//polymerase.scale.set(scale, scale, scale);
 	polymerase.position.set(8,5,0);
-	//applyTransforms(polymerase);
+	scene.add(polymerase);
+}
+
+function addSigma(){
+	var polymerase = findModelByName('sigma');
+	polymerase.position.set(8,-5,0);
 	scene.add(polymerase);
 }
 

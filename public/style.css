@@ -11,10 +11,10 @@ body {
   background: #fff;
   position: relative;
   z-index:100;
-  left: 50px;
-  top: 50px;
+  left: 10px;
+  top: 10px;
   display: inline-block;
-  padding: 20px;
+  padding: 10px;
 }
 
 .info-adenine {
@@ -31,4 +31,12 @@ body {
 
 .info-guanine {
   background: #ffe207;
+}
+
+.info-polymerase {
+  background: #ea3cd6;
+}
+
+.info-sigma {
+  background: #e2580d;
 }
