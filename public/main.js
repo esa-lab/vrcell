@@ -8,6 +8,8 @@ var showSticks = false;
 var transparent = showSticks;
 var opacity = 0.5;
 
+var domEvents;
+
 var sequence = "N".repeat(40);
 sequence = insertStringAt(sequence, "TATA", -10);
 sequence = insertStringAt(sequence, "TTGACA", -35);
@@ -181,6 +183,8 @@ function loadModel(model, callback){
 	var objloader = new THREE.OBJLoader();
 	objloader.load(model.url, function(object){
 
+		object = object.children[0];
+
 		object.rotation.x = model.rotation.x;
 		object.rotation.y = model.rotation.y;
 		object.rotation.z = model.rotation.z;
@@ -188,13 +192,8 @@ function loadModel(model, callback){
 
 		applyTransforms(object);
 
-		// Traverse the loaded object and set all meshes material to color
 		var basicMaterial = new THREE.MeshLambertMaterial( { color: model.color, transparent: transparent, opacity: opacity} );
-		object.traverse( function ( child ) {
-				if ( child instanceof THREE.Mesh ) {
-						child.material = basicMaterial;
-				}
-		} );
+		object.material = basicMaterial;
 
 		model.object = object;
 
@@ -229,13 +228,17 @@ function loadStick(model, callback){
 
 function applyTransforms(object){
 	object.updateMatrix();
-	object.children[0].geometry.applyMatrix( object.matrix );
+	object.geometry.applyMatrix( object.matrix );
 	object.position.set( 0, 0, 0 );
 	object.rotation.set( 0, 0, 0 );
 	object.scale.set( 1, 1, 1 );
 	object.updateMatrix();
 }
 
+
+var outlinePass, composer, effectFXAA;
+var mouse = new THREE.Vector2();
+var raycaster = new THREE.Raycaster();
 
 function init() {
 
@@ -245,7 +248,8 @@ function init() {
 	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
 	camera.position.set(10, 10, 10);
 
-	renderer = new THREE.WebGLRenderer({ antialias: true });
+	renderer = new THREE.WebGLRenderer({ antialias: false });
+	renderer.autoClear = true;
 	renderer.setSize( window.innerWidth, window.innerHeight );
 
 	document.body.appendChild( renderer.domElement );
@@ -253,10 +257,9 @@ function init() {
   controls = new THREE.OrbitControls(camera);
 	controls.target.set(10, 0, 0);
 	controls.update();
-  controls.addEventListener( 'change', render );
 
-  var axisHelper = new THREE.AxisHelper( 2 );
-  scene.add( axisHelper );
+  // var axisHelper = new THREE.AxisHelper( 2 );
+  // scene.add( axisHelper );
 
 	var color1 = 0x631466;
 	var color2 = 0xbd41c1;
@@ -264,6 +267,17 @@ function init() {
 	var light = new THREE.HemisphereLight( 0xffffff, 0x6c4b6d, 1.2 );
 	scene.add( light );
 
+	composer = new THREE.EffectComposer( renderer );
+
+	var renderPass = new THREE.RenderPass( scene, camera );
+	composer.addPass( renderPass );
+
+	outlinePass = new THREE.OutlinePass( new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
+	composer.addPass( outlinePass );
+
+	shaderPass = new THREE.ShaderPass(THREE.CopyShader);
+	shaderPass.renderToScreen = true;
+	composer.addPass( shaderPass );
 
 	async.each(models, loadModel, function(){
 		console.log("All surfaces loaded");
@@ -282,6 +296,23 @@ function init() {
 			render();
 		}
 	});
+
+	window.addEventListener( 'mousemove', onMouseMove );
+}
+
+function onMouseMove(){
+	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+	raycaster.setFromCamera( mouse, camera );
+
+	var intersects = raycaster.intersectObjects( [ scene ], true );
+	if(intersects.length > 0){
+		var selectedObject = intersects[ 0 ].object;
+		outlinePass.selectedObjects = [selectedObject];
+	} else {
+		outlinePass.selectedObjects = [];
+	}
 }
 
 function addPolymerase(){
@@ -297,5 +328,11 @@ function addSigma(){
 }
 
 function render(){
-  renderer.render( scene, camera );
+
+	window.requestAnimationFrame(render);
+
+	// renderer.setClearColor( 0xfff0f0 );
+	// renderer.setClearAlpha( 0.0 );
+	composer.render();
+  //renderer.render( scene, camera );
 }
